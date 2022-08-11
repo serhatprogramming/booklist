@@ -10,10 +10,8 @@ function UI() {}
 // Add Book To List
 UI.prototype.addBookToList = function (book) {
   const list = document.querySelector("#book-list");
-
   // create a row
   const row = document.createElement("tr");
-
   // add book to the row element
   row.innerHTML = `
   <td>${book.title}</td>
@@ -57,7 +55,6 @@ document.querySelector("#book-form").addEventListener("submit", function (e) {
   const title = document.querySelector("#title").value,
     author = document.querySelector("#author").value,
     isbn = document.querySelector("#isbn").value;
-
   // instantiate UI
   const ui = new UI();
   // Validate
@@ -67,19 +64,14 @@ document.querySelector("#book-form").addEventListener("submit", function (e) {
     e.preventDefault();
     return;
   }
-
   // Instantiate a book
   const book = new Book(title, author, isbn);
-
   // Add book to list
   ui.addBookToList(book);
-
   // Clear the fields
   ui.clearFields();
-
   // Show Success message
   ui.showAlert("Book Added Succesfully!", "success");
-
   e.preventDefault();
 });
 
