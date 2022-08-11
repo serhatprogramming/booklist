@@ -1,3 +1,9 @@
+// onload
+window.addEventListener("load", () => {
+  console.log("Displaying books...");
+  Storage.displayBooks();
+});
+
 class Book {
   constructor(title, author, isbn) {
     this.title = title;
@@ -35,6 +41,7 @@ class UI {
   // Delete a book from the list
   static deleteBook(target) {
     if (target.classList.contains("delete-book")) {
+      Storage.removeBook(target.parentElement.parentElement);
       target.parentElement.parentElement.remove();
       return true;
     }
@@ -47,7 +54,48 @@ class UI {
   }
 }
 
-console.log(new UI());
+// Local Storage Class
+class Storage {
+  static getBooks() {}
+
+  static displayBooks() {
+    if (!localStorage.getItem("books")) {
+      return;
+    }
+    for (const book of JSON.parse(localStorage.getItem("books"))) {
+      UI.addBookToList(book);
+    }
+  }
+
+  static addBook(book) {
+    if (!localStorage.getItem("books")) {
+      const bookList = [];
+      bookList.push(book);
+      localStorage.setItem("books", JSON.stringify(bookList));
+    } else {
+      let bookList = [];
+      bookList = JSON.parse(localStorage.getItem("books"));
+      bookList.push(book);
+      localStorage.setItem("books", JSON.stringify(bookList));
+    }
+  }
+
+  static removeBook(target) {
+    let bookList = [];
+    bookList = JSON.parse(localStorage.getItem("books"));
+    for (const key in bookList) {
+      if (
+        target.children[0].textContent === bookList[key].title &&
+        target.children[1].textContent === bookList[key].author &&
+        target.children[2].textContent === bookList[key].isbn
+      ) {
+        console.log(bookList[key]);
+        bookList.splice(key, 1);
+        localStorage.setItem("books", JSON.stringify(bookList));
+      }
+    }
+  }
+}
 
 // Event Listener for addbook
 document.querySelector("#book-form").addEventListener("submit", function (e) {
@@ -66,6 +114,8 @@ document.querySelector("#book-form").addEventListener("submit", function (e) {
   const book = new Book(title, author, isbn);
   // Add book to list
   UI.addBookToList(book);
+  // Add to Local Storage
+  Storage.addBook(book);
   // Clear the fields
   UI.clearFields();
   // Show Success message
